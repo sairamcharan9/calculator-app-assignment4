@@ -9,6 +9,7 @@ Uses capsys to capture printed output.
 
 import pytest
 from decimal import Decimal
+from unittest.mock import patch
 
 from app.calculator import Calculator
 
@@ -143,6 +144,21 @@ class TestErrorHandling:
         """Test that failed operations are NOT recorded in history."""
         calculator.process_input("divide 10 0")
         assert len(calculator.history) == 0
+
+    def test_value_error_from_factory(self, calculator: Calculator) -> None:
+        """Test that a ValueError raised by CalculationFactory is handled (EAFP).
+
+        This covers the except-ValueError branch in process_input that is
+        normally unreachable because LBYL validation catches unknown
+        operations first.  We patch the factory to force the path.
+        """
+        with patch(
+            "app.calculator.CalculationFactory.create",
+            side_effect=ValueError("Injected error"),
+        ):
+            result = calculator.process_input("add 1 2")
+        assert "Error" in result
+        assert "Injected error" in result
 
 
 # ===========================================================================
