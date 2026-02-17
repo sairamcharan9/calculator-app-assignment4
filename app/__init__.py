@@ -1,1 +1,7 @@
-"""App package for the calculator application."""
+"""
+Calculator App
+==============
+
+A professional-grade command-line calculator application
+with a modular architecture.
+"""
